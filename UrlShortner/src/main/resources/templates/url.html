@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Shortener</title>
+</head>
+<body style="background-color:pink">
+<input type="text" id="longUrl" placeholder="Enter your long URL" />
+<button type="submit" onclick="submitUrl()">Submit</button><br>
+<input type="text" id="shortUrl" placeholder="Your Short URL" readonly />
+
+<script>
+  async function submitUrl() {
+      const longUrl = document.getElementById("longUrl").value;
+      const shortUrl = document.getElementById("shortUrl");
+
+      try {
+          // Make a fetch request to your Spring Boot backend
+          const response = await fetch(`http://localhost:8080/saveUrl?actualUrl=${encodeURIComponent(longUrl)}`, {method:'POST'});
+
+          // Check if the response is okay
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          // Parse the JSON response
+          const output = await response.json();
+
+          // Set the short URL value from the JSON response
+          shortUrl.value = output.shortUrl;
+
+      } catch (error) {
+          console.error('Error:', error);
+          shortUrl.value = 'Error generating short URL';
+      }
+  }
+</script>
+</body>
+</html>

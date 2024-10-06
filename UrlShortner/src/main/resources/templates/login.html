@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login/Register</title>
+    <script>
+        function toggleForm() {
+            const loginForm = document.getElementById("login-form");
+            const registerForm = document.getElementById("register-form");
+            loginForm.style.display = loginForm.style.display === "none" ? "block" : "none";
+            registerForm.style.display = registerForm.style.display === "none" ? "block" : "none";
+        }
+
+        async function submitForm(e, type) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const url = type === 'login' ? '/login-user' : '/register';
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success === "true") {
+                    if (type === 'login-user' && result.redirect) {
+                        // Redirect to home page on successful login
+                        window.location.href = result.redirect;
+                    } else {
+                        alert('User Created Successfully');
+                        // If registration was successful, navigate to login page
+                        if (type === 'register') {
+                            toggleForm();  // Switch back to the login form
+                        }
+                    }
+                } else {
+                    // Show an error message (e.g., invalid login or email already exists)
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</head>
+<body>
+<!-- Login Form -->
+<form id="login-form" action="/login-user" method="post" onsubmit="submitForm(event, 'login')">
+    <h2>Login</h2>
+    <div>
+        <label for="email">Email Id:</label>
+        <input type="text" id="email" name="email" required />
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+    </div>
+    <div>
+        <button type="submit">Login</button><br>
+        <button type="button" onclick="toggleForm()">Create new account</button>
+    </div>
+</form>
+
+<!-- Registration Form -->
+<form id="register-form" action="/register" method="post" onsubmit="submitForm(event, 'register')" style="display: none;">
+    <h2>Register</h2>
+    <div>
+        <label for="reg_username">Username:</label>
+        <input type="text" id="reg_username" name="username" required />
+    </div>
+    <div>
+        <label for="reg_email">Email:</label>
+        <input type="email" id="reg_email" name="email" required />
+    </div>
+    <div>
+        <label for="reg_password">Password:</label>
+        <input type="password" id="reg_password" name="password" required />
+    </div>
+    <div>
+        <button type="submit">Register</button><br>
+        <button type="button" onclick="toggleForm()">Login Page</button>
+    </div>
+</form>
+</body>
+</html>
