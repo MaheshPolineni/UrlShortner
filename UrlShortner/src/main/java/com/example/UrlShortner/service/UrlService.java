@@ -32,7 +32,7 @@ public class UrlService {
         }
         urlEntity.setShortenUrl(builder.toString());
         urlRepository.save(urlEntity);
-        return builder.toString();
+        return "http://localhost:8080/r?s="+builder.toString();
     }
 
 

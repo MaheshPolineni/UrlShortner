@@ -14,18 +14,11 @@
       const shortUrl = document.getElementById("shortUrl");
 
       try {
-          // Make a fetch request to your Spring Boot backend
           const response = await fetch(`http://localhost:8080/saveUrl?actualUrl=${encodeURIComponent(longUrl)}`, {method:'POST'});
-
-          // Check if the response is okay
           if (!response.ok) {
               throw new Error('Network response was not ok');
           }
-
-          // Parse the JSON response
           const output = await response.json();
-
-          // Set the short URL value from the JSON response
           shortUrl.value = output.shortUrl;
 
       } catch (error) {
