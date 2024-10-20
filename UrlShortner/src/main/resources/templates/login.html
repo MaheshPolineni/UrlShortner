@@ -1,89 +1,136 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <title>Login/Register</title>
-    <script>
-        function toggleForm() {
-            const loginForm = document.getElementById("login-form");
-            const registerForm = document.getElementById("register-form");
-            loginForm.style.display = loginForm.style.display === "none" ? "block" : "none";
-            registerForm.style.display = registerForm.style.display === "none" ? "block" : "none";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration and Login Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        async function submitForm(e, type) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const url = type === 'login' ? '/login-user' : '/register';
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: JSON.stringify(Object.fromEntries(formData)),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (result.success === "true") {
-                    if (type === 'login-user' && result.redirect) {
-                        // Redirect to home page on successful login
-                        window.location.href = result.redirect;
-                    } else {
-                        alert('User Created Successfully');
-                        // If registration was successful, navigate to login page
-                        if (type === 'register') {
-                            toggleForm();  // Switch back to the login form
-                        }
-                    }
-                } else {
-                    // Show an error message (e.g., invalid login or email already exists)
-                    alert(result.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+        .form-container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-    </script>
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        h2 {
+            text-align: center;
+            color: darkblue;
+        }
+    </style>
 </head>
 <body>
-<!-- Login Form -->
-<form id="login-form" action="/login-user" method="post" onsubmit="submitForm(event, 'login')">
-    <h2>Login</h2>
-    <div>
-        <label for="email">Email Id:</label>
-        <input type="text" id="email" name="email" required />
-    </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
-    </div>
-    <div>
-        <button type="submit">Login</button><br>
-        <button type="button" onclick="toggleForm()">Create new account</button>
-    </div>
-</form>
 
-<!-- Registration Form -->
-<form id="register-form" action="/register" method="post" onsubmit="submitForm(event, 'register')" style="display: none;">
-    <h2>Register</h2>
-    <div>
-        <label for="reg_username">Username:</label>
-        <input type="text" id="reg_username" name="username" required />
+<div class="form-container">
+    <h2>URL Shortner</h2>
+    <div id="registrationForm" class="form-section">
+        <h2>Registration Form</h2>
+        <form>
+            <label for="username">Username:</label>
+            <input type="text" id="reg-username" name="username" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="reg-email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="reg-password" name="password" required>
+
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+            <button onclick="register()">Submit</button><br><br>
+        </form>
+        <button onclick="showLoginForm()">Already have an account? Login</button>
     </div>
-    <div>
-        <label for="reg_email">Email:</label>
-        <input type="email" id="reg_email" name="email" required />
+
+    <div id="loginForm" class="form-section hidden">
+        <h2>Login</h2>
+        <form action="/login" method="post">
+            <label for="username">Username</label>
+            <input type="text" id="login-username" name="username" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="login-password" name="password" required>
+
+            <button type="submit">Login</button><br><br>
+        </form>
+
+        <button onclick="showRegistrationForm()">Register</button>
     </div>
-    <div>
-        <label for="reg_password">Password:</label>
-        <input type="password" id="reg_password" name="password" required />
-    </div>
-    <div>
-        <button type="submit">Register</button><br>
-        <button type="button" onclick="toggleForm()">Login Page</button>
-    </div>
-</form>
+</div>
+
+<script>
+
+    async function register(){
+    const password=document.getElementById("reg-password").value;
+    const confirmPassword=document.getElementById("confirmPassword").value;
+    if(password!=confirmPassword)
+    {
+    alert("Password doesn't match");
+    return;
+    }
+    const registeredData=await fetch("http://localhost:8080/register",{
+    method:'POST',
+    headers:{
+    'Content-Type':'application/json'
+    },
+    body:JSON.stringify({
+    username:document.getElementById("reg-username").value,
+    password:document.getElementById("reg-password").value,
+    email:document.getElementById("reg-email").value
+    })
+    })
+    if(registeredData.ok){
+    const finalData=await registeredData.json();
+    alert(`${finalData.message}`)
+    }
+    else
+    alert("Invalid Please try again");
+    }
+
+    function showRegistrationForm() {
+        document.getElementById('registrationForm').classList.remove('hidden');
+        document.getElementById('loginForm').classList.add('hidden');
+    }
+
+    function showLoginForm() {
+        document.getElementById('registrationForm').classList.add('hidden');
+        document.getElementById('loginForm').classList.remove('hidden');
+    }
+</script>
+
 </body>
 </html>

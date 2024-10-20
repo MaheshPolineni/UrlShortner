@@ -1,12 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>URL Shortener</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff; /* Light background color */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        padding: 20px;
+        position: relative; /* Enable absolute positioning for child elements */
+    }
+    h2 {
+        color: #4CAF50; /* Green color for the heading */
+        margin-bottom: 20px;
+    }
+    input[type="text"] {
+        width: 300px; /* Set a fixed width */
+        padding: 10px;
+        margin: 10px 0;
+        border: 2px solid #4CAF50; /* Green border */
+        border-radius: 4px;
+        font-size: 16px; /* Larger font size */
+    }
+    input[type="text"]:focus {
+        border-color: #45a049; /* Darker green on focus */
+        outline: none; /* Remove outline */
+    }
+    button {
+        background-color: #4CAF50; /* Green background */
+        color: white; /* White text */
+        padding: 10px 20px; /* Added padding for larger buttons */
+        border: none; /* Remove border */
+        border-radius: 4px; /* Rounded corners */
+        cursor: pointer;
+        font-size: 16px; /* Larger font size */
+        margin-top: 10px; /* Space above button */
+        transition: background-color 0.3s; /* Smooth transition for hover */
+    }
+    button:hover {
+        background-color: #45a049; /* Darker green on hover */
+    }
+    .container {
+        text-align: center; /* Center the text */
+        background-color: white; /* White background for the container */
+        padding: 20px;
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    }
+    .logout-button {
+        position: absolute; /* Positioning relative to the body */
+        top: 20px; /* Distance from the top */
+        right: 20px; /* Distance from the right */
+        background-color: #d9534f; /* Red background for logout */
+    }
+  </style>
 </head>
-<body style="background-color:pink">
-<input type="text" id="longUrl" placeholder="Enter your long URL" />
-<button type="submit" onclick="submitUrl()">Submit</button><br>
-<input type="text" id="shortUrl" placeholder="Your Short URL" readonly />
+<body>
+
+<button class="logout-button" onclick="logout()">Logout</button>
+
+<div class="container">
+  <h2>URL Shortener</h2>
+  <input type="text" id="longUrl" placeholder="Enter your long URL" />
+  <button type="submit" onclick="submitUrl()">Submit</button>
+  <input type="text" id="shortUrl" placeholder="Your Short URL" readonly />
+</div>
 
 <script>
   async function submitUrl() {
@@ -26,6 +91,18 @@
           shortUrl.value = 'Error generating short URL';
       }
   }
+  async function logout(){
+  const logout=await fetch("http://localhost:8080/logout",{
+  method:"POST"
+  });
+  if(logout.ok){
+  window.location.href="/login?logout";
+  }
+  else{
+  alert("Logout Failed");
+  }
+  }
 </script>
+
 </body>
 </html>

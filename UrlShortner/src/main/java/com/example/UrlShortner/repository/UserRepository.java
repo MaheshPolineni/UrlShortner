@@ -12,6 +12,5 @@ import java.util.Optional;
 @Transactional
 public interface UserRepository extends JpaRepository<UserEntity,Long> {
     UserEntity findByUsername(String username);
-    @Query(value = "select * from url_shortner.user_entity where email=?1",nativeQuery = true)
     UserEntity findByEmail(String email);
 }

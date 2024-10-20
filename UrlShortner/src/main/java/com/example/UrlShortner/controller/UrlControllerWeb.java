@@ -10,8 +10,8 @@ public class UrlControllerWeb {
     public String home() {
         return "url";
     }
-    @GetMapping("/login") // Add this method to handle GET requests for login
+    @GetMapping("/login")
     public String login() {
-        return "login"; // Return the name of your login HTML template (e.g., login.html)
+        return "login";
     }
 }
